@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<febio_diagnostic type="tangent test">
+        <Control>
+            <time_steps>1</time_steps>
+            <step_size>1</step_size>
+        </Control>
+        <Scenario type="uni-axial">
+            <strain>0.2</strain>
+        </Scenario>
+        <Material>
+            <material id="1" name="Solid" type="UncoupledConstrainedMixture">
+                <c>30e-3</c>
+                <E_G_x>1.2</E_G_x>
+                <E_G_y>1.0</E_G_y>
+                <E_G_Time>1</E_G_Time>
+                <k>30</k>
+            </material>
+        </Material>
+ </febio_diagnostic>
