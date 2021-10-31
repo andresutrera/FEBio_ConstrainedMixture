@@ -1,19 +1,7 @@
 #include "UncoupledConstrainedMixture.h"
 #include <FECore/FEModel.h>
 #include <FECore/log.h>
-//-----------------------------------------------------------------------------
-// These macros define the material parameter list for the FENeoHookeanPI material.
-//
-// The BEGIN_FECORE_CLASS macro takes the material class and its base class as
-// parameters.
-//
-// The ADD_PARAMETER macro defines the actual parameter. It takes three parameters:
-// - the variable as defined in the class.
-// - a range speficier which defines the valid range of the parameter
-// - a string that defines the name of the parameter as it will appear in the input file.
-//
-// The END_PARAMETER_LIST macro just defines the end of the parameter list.
-// define the material parameters
+
 BEGIN_FECORE_CLASS(FEUncoupledConstrainedMixture, FEUncoupledMaterial)
 	ADD_PARAMETER(m_c    , FE_RANGE_GREATER_OR_EQUAL(0.0), "c");
 	ADD_PARAMETER(m_E_G[0]    , FE_RANGE_GREATER_OR_EQUAL(1.0), "E_G_x");
@@ -61,8 +49,6 @@ mat3ds FEUncoupledConstrainedMixture::NeoHookeDevStress(FEMaterialPoint& mp)
 
 	// calculate deviatoric left Cauchy-Green tensor: b = F*Ft
 	mat3ds b = pt.DevLeftCauchyGreen();
-	mat3ds C = pt.DevRightCauchyGreen();
-	double I1 = C.tr();
 
 	// Evaluate the ground matrix stress
 	mat3ds s = E_G*c*I*E_G*b;
@@ -95,15 +81,12 @@ tens4ds FEUncoupledConstrainedMixture::NeoHookeDevTangent(FEMaterialPoint& mp)
 
     // calculate deviatoric left Cauchy-Green tensor: b = F*Ft
     mat3ds b = pt.DevLeftCauchyGreen();
-    mat3ds C = pt.DevRightCauchyGreen();
-    double I1 = C.tr();
-
 
     // Evaluate the ground matrix stress
     mat3ds s = E_G*c*I*E_G*b;
 
 
-	mat3ds sbar = s.dev();
+		mat3ds sbar = s.dev();
 
     // Evaluate the elasticity tensor
 
