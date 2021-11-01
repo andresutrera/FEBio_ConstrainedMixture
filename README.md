@@ -3,7 +3,6 @@
 # actualizacion#1
 # actualizacion#2
 # actualizacion#3
-<<<<<<< HEAD
 ![Alt text](doc/ref.svg?raw=true "Coordinate system")
 =======
 
