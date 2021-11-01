@@ -3,7 +3,8 @@
 # actualizacion#1
 # actualizacion#2
 # actualizacion#3
-![Alt text](doc/ref.svg?raw=true "Coordinate system")
+![Alt text](./doc/ref.svg)
+<img src="./doc/ref.svg">
 =======
 
 # PASOS PARA ACTUALIZAR REPOSITORIO #
