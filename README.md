@@ -5,10 +5,10 @@
 # actualizacion#3
 
 # PASOS PARA ACTUALIZAR REPOSITORIO #
-"git pull \n"
-"git add <archivo trabajado> \n"
-git commit -m "mensaje"
-git pull
-git mergetool (si hay confictos)
-git push origin main
-git push upstream main
+# 1) git pull
+# 2) git add <archivo trabajado>
+# 3) git commit -m "mensaje"
+# 4) git pull
+# 5) git mergetool (si hay confictos)
+# 6) git push origin main
+# 7) git push upstream main
