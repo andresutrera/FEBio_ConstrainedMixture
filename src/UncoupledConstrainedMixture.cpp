@@ -4,9 +4,9 @@
 
 BEGIN_FECORE_CLASS(FEUncoupledConstrainedMixture, FEUncoupledMaterial)
 	ADD_PARAMETER(m_c    , FE_RANGE_GREATER_OR_EQUAL(0.0), "c");
-	ADD_PARAMETER(m_E_G[0]    , FE_RANGE_GREATER_OR_EQUAL(1.0), "E_G_x");
-	ADD_PARAMETER(m_E_G[1]    , FE_RANGE_GREATER_OR_EQUAL(1.0), "E_G_y");
-	ADD_PARAMETER(m_E_G_Time    , FE_RANGE_GREATER_OR_EQUAL(0.0), "E_G_Time");
+	ADD_PARAMETER(m_E_G[0]    , FE_RANGE_GREATER_OR_EQUAL(1.0), "E_G_z"); // Z pre-stretch
+	ADD_PARAMETER(m_E_G[1]    , FE_RANGE_GREATER_OR_EQUAL(1.0), "E_G_theta");// theta pre-stretch. radial pre-stetch is calculated by incompressibility of E_G
+	ADD_PARAMETER(m_G_Time    , FE_RANGE_GREATER_OR_EQUAL(0.0), "G_Time");
 
 END_FECORE_CLASS();
 
@@ -31,11 +31,18 @@ mat3ds FEUncoupledConstrainedMixture::NeoHookeDevStress(FEMaterialPoint& mp)
 	mat3dd I(1);
 	double time = GetFEModel()->GetTime().currentTime;
 	double c = m_c(mp);
-	double E_G_x = m_E_G[0](mp);
-	double E_G_y = m_E_G[1](mp);
-	double E_G_z = 1.0/(E_G_x*E_G_y);
-	double E_G_Time = m_E_G_Time;
-	mat3dd E_G = (time <= E_G_Time) ? (mat3dd(E_G_x,E_G_y,E_G_z)-I)*time/E_G_Time+I : mat3dd(E_G_x,E_G_y,E_G_z);
+	double E_G_z = m_E_G[0](mp); //Copy the material properties.
+	double E_G_t = m_E_G[1](mp);
+	double E_G_r = 1.0/(E_G_z*E_G_t);
+	double G_Time = m_G_Time;
+	//Form the stretch deposition tensor E_G with a diagonal matrix.
+	//| E_G_r				0						0 		|
+	//|   0			E_G_theta				0 		|
+	//|		0					0						E_G_z |
+	mat3dd E_G = (time <= G_Time) ? (mat3dd(E_G_r,E_G_t,E_G_z)-I)*time/G_Time+I : mat3dd(E_G_r,E_G_t,E_G_z);
+
+	mat3d Q = GetLocalCS(mp); //Get material axes.
+	mat3d E_G_rot = (Q*E_G*Q.transpose()); //Rotate the pre-stretch tensor respect to the material axes.
 
 	FEElasticMaterialPoint& pt = *mp.ExtractData<FEElasticMaterialPoint>();
 
@@ -51,7 +58,8 @@ mat3ds FEUncoupledConstrainedMixture::NeoHookeDevStress(FEMaterialPoint& mp)
 	mat3ds b = pt.DevLeftCauchyGreen();
 
 	// Evaluate the ground matrix stress
-	mat3ds s = E_G*c*I*E_G*b;
+	//mat3ds s = E_G*c*I*E_G*b;
+	mat3ds s = (E_G_rot*c*I*E_G_rot*b).sym();
 
 
 	return s.dev() / J;
@@ -63,12 +71,14 @@ tens4ds FEUncoupledConstrainedMixture::NeoHookeDevTangent(FEMaterialPoint& mp)
 	  mat3dd I(1);
 		double time = GetFEModel()->GetTime().currentTime;
     double c = m_c(mp);
-		double E_G_x = m_E_G[0](mp);
-		double E_G_y = m_E_G[1](mp);
-		double E_G_z = 1.0/(E_G_x*E_G_y);
-		double E_G_Time = m_E_G_Time;
+		double E_G_z = m_E_G[0](mp);
+		double E_G_t = m_E_G[1](mp);
+		double E_G_r = 1.0/(E_G_z*E_G_t);
+		double G_Time = m_G_Time;
 
-		mat3dd E_G = (time <= E_G_Time) ? (mat3dd(E_G_x,E_G_y,E_G_z)-I)*time/E_G_Time+I : mat3dd(E_G_x,E_G_y,E_G_z);
+		mat3dd E_G = (time <= G_Time) ? (mat3dd(E_G_r,E_G_t,E_G_z)-I)*time/G_Time+I : mat3dd(E_G_r,E_G_t,E_G_z);
+		mat3d Q = GetLocalCS(mp);
+		mat3d E_G_rot = (Q*E_G*Q.transpose());
 
     FEElasticMaterialPoint& pt = *mp.ExtractData<FEElasticMaterialPoint>();
 
@@ -83,16 +93,14 @@ tens4ds FEUncoupledConstrainedMixture::NeoHookeDevTangent(FEMaterialPoint& mp)
     mat3ds b = pt.DevLeftCauchyGreen();
 
     // Evaluate the ground matrix stress
-    mat3ds s = E_G*c*I*E_G*b;
-
+    mat3ds s = (E_G_rot*c*I*E_G_rot*b).sym();
 
 		mat3ds sbar = s.dev();
 
     // Evaluate the elasticity tensor
-
     tens4ds IxI = dyad1s(I);
     tens4ds I4  = dyad4s(I);
     tens4ds ce = ((I4 - IxI/3.)*s.tr()-dyad1s(sbar,I))*(2./3.);
-		ce = ce.pp(E_G);
+		ce = ce.pp(E_G_rot);
     return ce / J;
 }

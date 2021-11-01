@@ -19,7 +19,7 @@ public:
 private:
 	FEParamDouble  m_c;         // neo-Hookean c coefficient
 	FEParamDouble  m_E_G[2];
-	double	m_E_G_Time;	// Elastin desposition time
+	double	m_G_Time;	// Elastin desposition time
 	mat3ds NeoHookeDevStress(FEMaterialPoint& mp);
 	tens4ds NeoHookeDevTangent(FEMaterialPoint& mp);
 
