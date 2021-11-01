@@ -5,8 +5,8 @@
 # actualizacion#3
 
 # PASOS PARA ACTUALIZAR REPOSITORIO #
-git pull
-git add <archivo trabajado>
+"git pull \n"
+"git add <archivo trabajado> \n"
 git commit -m "mensaje"
 git pull
 git mergetool (si hay confictos)
