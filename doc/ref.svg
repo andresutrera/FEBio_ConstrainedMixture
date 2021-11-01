@@ -16,7 +16,7 @@
    version="1.1"
    id="svg8"
    inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
-   sodipodi:docname="dibujo.svg">
+   sodipodi:docname="ref.svg">
   <defs
      id="defs2">
     <linearGradient
@@ -168,9 +168,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.7"
-     inkscape:cx="-40.563658"
-     inkscape:cy="196.99894"
+     inkscape:zoom="1.979899"
+     inkscape:cx="265.33338"
+     inkscape:cy="356.24599"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -197,7 +197,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -300,8 +300,8 @@
          y="66.16169"
          style="font-size:7.76111126px;stroke-width:0.26458332"
          id="tspan9124">ẑ(e<tspan
-   style="font-size:64.99999762%;baseline-shift:sub"
-   id="tspan9168">1</tspan>)</tspan></text>
+   style="font-size:65%;baseline-shift:sub"
+   id="tspan904">3</tspan>)</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:4.23333311px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -313,8 +313,8 @@
          y="86.956238"
          style="font-size:7.76111126px;stroke-width:0.26458332"
          id="tspan9124-2">θ̂(e<tspan
-   style="font-size:64.99999762%;baseline-shift:sub"
-   id="tspan9172">3</tspan>)</tspan></text>
+   style="font-size:65%;baseline-shift:sub"
+   id="tspan906">2</tspan>)</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:4.23333311px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -325,7 +325,7 @@
          id="tspan9146"
          x="179.87239"
          y="118.60133"
-         style="stroke-width:0.26458332"></tspan></text>
+         style="stroke-width:0.26458332" /></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:4.23333311px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -337,7 +337,29 @@
          y="119.69176"
          style="font-size:7.76111126px;stroke-width:0.26458332"
          id="tspan9124-2-0">r̂(e<tspan
-   style="font-size:64.99999762%;baseline-shift:sub"
-   id="tspan9170">2</tspan>)</tspan></text>
+   style="font-size:65%;baseline-shift:sub"
+   id="tspan908">1</tspan>)</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:4.23333311px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="196.0818"
+       y="86.80571"
+       id="text898"><tspan
+         sodipodi:role="line"
+         id="tspan896"
+         x="196.0818"
+         y="90.551216"
+         style="stroke-width:0.26458332" /></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:4.23333311px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="165.21217"
+       y="67.027763"
+       id="text902"><tspan
+         sodipodi:role="line"
+         id="tspan900"
+         x="165.21217"
+         y="70.77327"
+         style="stroke-width:0.26458332" /></text>
   </g>
 </svg>
