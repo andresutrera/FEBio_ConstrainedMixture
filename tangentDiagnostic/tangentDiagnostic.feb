@@ -1,19 +1,34 @@
 <?xml version="1.0"?>
 <febio_diagnostic type="tangent test">
         <Control>
-            <time_steps>1</time_steps>
-            <step_size>1</step_size>
+            <time_steps>20</time_steps>
+            <step_size>0.05</step_size>
         </Control>
         <Scenario type="uni-axial">
-            <strain>0.4</strain>
+            <strain>1.5</strain>
         </Scenario>
-        <Material>
-            <material id="1" name="Solid" type="UncoupledConstrainedMixture">
-                <c>30e-3</c>
-                <E_G_z>1.1</E_G_z>
-                <E_G_theta>1.0</E_G_theta>
-                <G_Time>1</G_Time>
-                <k>30</k>
-            </material>
-        </Material>
+	<Material>
+		<material id="1" name="Material2" type="UncoupledConstrainedMixture">
+			<density>1</density>
+			<E_c>0.03</E_c>
+			<E_G_z>1.2</E_G_z>
+			<E_G_theta>1.0</E_G_theta>
+			
+			<C_k1>50e-3</C_k1>
+			<C_k2>0.4</C_k2>
+			<C_kappa>0.2</C_kappa>
+			<C_gamma>60</C_gamma>
+			<C_G_z>1.0</C_G_z>
+			<C_G_theta>1.0</C_G_theta>
+			
+			<G_Time>1.0</G_Time>
+			<k>30</k>
+			<mat_axis type="vector">
+				<!--a is the radial vector-->
+				<!--d is the theta vector-->
+				<a>1,0,0</a>
+ 				<d>0,1,0</d>
+			</mat_axis>
+		</material>
+	</Material>
  </febio_diagnostic>

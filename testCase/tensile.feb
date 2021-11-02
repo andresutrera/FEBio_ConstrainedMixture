@@ -1,30 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <febio_spec version="3.0">
 	<Module type="solid"/>
-	<Control>
-		<analysis>STATIC</analysis>
-		<time_steps>10</time_steps>
-		<step_size>0.1</step_size>
-		<solver>
-			<max_refs>15</max_refs>
-			<max_ups>10</max_ups>
-			<diverge_reform>1</diverge_reform>
-			<reform_each_time_step>1</reform_each_time_step>
-			<dtol>0.001</dtol>
-			<etol>0.01</etol>
-			<rtol>0</rtol>
-			<lstol>0.9</lstol>
-			<min_residual>1e-20</min_residual>
-			<qnmethod>BFGS</qnmethod>
-			<rhoi>0</rhoi>
-		</solver>
-		<time_stepper>
-			<dtmin>0.01</dtmin>
-			<dtmax>0.1</dtmax>
-			<max_retries>5</max_retries>
-			<opt_iter>10</opt_iter>
-		</time_stepper>
-	</Control>
 	<Globals>
 		<Constants>
 			<T>0</T>
@@ -35,16 +11,26 @@
 	<Material>
 		<material id="1" name="Material2" type="UncoupledConstrainedMixture">
 			<density>1</density>
-			<c>0.03</c>
-			<k>30</k>
-			<E_G_z>1.2</E_G_z>
+			<E_phi>1</E_phi>
+			<E_c>30e-3</E_c>
+			<E_G_z>1.3</E_G_z>
 			<E_G_theta>1.0</E_G_theta>
+			
+			<C_phi>1</C_phi>
+			<C_k1>50e-3</C_k1>
+			<C_k2>0.4</C_k2>
+			<C_kappa>0.1</C_kappa>
+			<C_gamma>60</C_gamma>
+			<C_G_z>1.0</C_G_z>
+			<C_G_theta>1.0</C_G_theta>
+			
 			<G_Time>1.0</G_Time>
+			<k>30</k>
 			<mat_axis type="vector">
 				<!--a is the radial vector-->
 				<!--d is the theta vector-->
-				<a>1,0,0</a>
- 				<d>0,0,1</d>
+				<a>0,1,0</a>
+ 				<d>1,0,0</d>
 			</mat_axis>
 		</material>
 	</Material>
@@ -70,6 +56,9 @@
 		</Surface>
 		<Surface name="FixedDisplacement3">
 			<quad4 id="1">     3,     1,     2,     4</quad4>
+		</Surface>
+		<Surface name="PrescribedDisplacement1">
+			<quad4 id="1">     2,     6,     8,     4</quad4>
 		</Surface>
 		<Surface name="Volume1">
 			<quad4 id="1">     1,     5,     6,     2</quad4>
@@ -101,6 +90,52 @@
 			<penalty>1</penalty>
 		</constraint>
 	</Constraints>
+	<Step>
+		<step id="1" name="Step1">
+			<Control>
+				<analysis>STATIC</analysis>
+				<time_steps>20</time_steps>
+				<step_size>0.05</step_size>
+				<solver>
+					<max_refs>15</max_refs>
+					<max_ups>10</max_ups>
+					<diverge_reform>1</diverge_reform>
+					<reform_each_time_step>1</reform_each_time_step>
+					<dtol>0.001</dtol>
+					<etol>0.01</etol>
+					<rtol>0</rtol>
+					<lstol>0.9</lstol>
+					<min_residual>1e-20</min_residual>
+					<qnmethod>BFGS</qnmethod>
+					<rhoi>0</rhoi>
+				</solver>
+				<time_stepper>
+					<dtmin>0.01</dtmin>
+					<dtmax>0.1</dtmax>
+					<max_retries>5</max_retries>
+					<opt_iter>10</opt_iter>
+				</time_stepper>
+			</Control>
+			<Boundary>
+				<bc name="PrescribedDisplacement1" type="prescribe" node_set="@surface:PrescribedDisplacement1">
+					<dof>z</dof>
+					<scale lc="1">1</scale>
+					<relative>0</relative>
+				</bc>
+			</Boundary>
+			<Constraints>
+			</Constraints>
+		</step>
+	</Step>
+	<LoadData>
+		<load_controller id="1" type="loadcurve">
+			<interpolate>SMOOTH</interpolate>
+			<points>
+				<point>0,0</point>
+				<point>1,1</point>
+			</points>
+		</load_controller>
+	</LoadData>
 	<Output>
 		<plotfile type="febio">
 			<var type="displacement"/>
