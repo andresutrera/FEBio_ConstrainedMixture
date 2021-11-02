@@ -1,4 +1,5 @@
 # FEBio_ConstrainedMixture
+Under development....
 <img src="https://render.githubusercontent.com/render/math?math=e^{i \pi} = -1">
 # actualizacion#1
 # actualizacion#2
@@ -15,4 +16,3 @@
 # 5) git mergetool (si hay confictos)
 # 6) git push origin main
 # 7) git push upstream main
-
