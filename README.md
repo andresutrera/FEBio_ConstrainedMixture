@@ -12,6 +12,8 @@ Under development....
 # PASOS PARA ACTUALIZAR REPOSITORIO #
 # 1) git pull
 # 2) git add <archivo trabajado>
+# 2.1) si se requiere actualizar archivos "gid add ."
+# 2.2) "git status" para ver archivos nuevos y actualizados
 # 3) git commit -m "mensaje"
 # 4) git pull
 # 5) git mergetool (si hay confictos)

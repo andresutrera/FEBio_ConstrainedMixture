@@ -28,9 +28,9 @@ private:
 	// #################### Elastin ####################
 
 	// #################### Collagen ####################
-	//FEParamDouble  m_C_phi; //Collagen mass fraction
-	//FEParamDouble  m_C_k1, m_C_k2, m_C_kappa, m_C_gdeg;	//Fiber constants
-	//FEParamDouble  m_C_G[2]; //Pre-stretch tensor
+	FEParamDouble  m_C_phi; //Collagen mass fraction
+	FEParamDouble  m_C_k1, m_C_k2, m_C_kappa, m_C_gdeg;	//Fiber constants
+	FEParamDouble  m_C_G[2]; //Pre-stretch tensor
 	// #################### Collagen ####################
 
 	// #################### Time ####################
@@ -41,8 +41,8 @@ private:
 	// ########################################
 	mat3ds NeoHookeDevStress(FEMaterialPoint& mp);
 	tens4ds NeoHookeDevTangent(FEMaterialPoint& mp);
-	//mat3ds CollagenDevStress(FEMaterialPoint& mp);
-	//tens4ds CollagenDevTangent(FEMaterialPoint& mp);
+	mat3ds CollagenDevStress(FEMaterialPoint& mp);
+	tens4ds CollagenDevTangent(FEMaterialPoint& mp);
 
 
 };
