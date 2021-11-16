@@ -174,24 +174,21 @@ mat3ds FEUncoupledConstrainedMixture::CollagenDevStress(FEMaterialPoint& mp)
 	mat3d Q = GetLocalCS(mp); //Get material axes.
 	mat3d C_G_rot = (Q*C_G*Q.transpose()); //Rotate the pre-stretch tensor respect to the material axes.
 
-	// deformation gradient tensor
-	mat3d F = pt.m_F;
-
 	// determinant of deformation gradient
 	double J = pt.m_J;
 
-  // Collagen left Cauchy-Green strain tensor
-	mat3ds b_C = (F*C_G_rot*C_G_rot.transpose()*F.transpose()).sym();
+	// Evaluate the distortional deformation gradient
+  double Jm13 = pow(J, -1. / 3.);
+  mat3d F = pt.m_F*Jm13;
 
-	// Collagen right Cauchy-Green strain tensor
-	mat3ds C_C = (C_G_rot.transpose()*F.transpose()*F*C_G_rot).sym();
+  // Collagen left Cauchy-Green strain tensor
+  mat3ds b_C = (F*C_G_rot*C_G_rot.transpose()*F.transpose()).sym().dev();
+
+  // Collagen right Cauchy-Green strain tensor
+  mat3ds C_C = (C_G_rot.transpose()*F.transpose()*F*C_G_rot).sym().dev();
 
 	// trace of b_C
 	double I1bC=b_C.tr();
-
-	// Evaluate the distortional deformation gradient
-//	double Jm13 = pow(J, -1. / 3.);
-//	mat3d F = pt.m_F*Jm13;
 
 	// calculate deviatoric left Cauchy-Green tensor: b = F*Ft
 //	mat3ds b = pt.DevLeftCauchyGreen();
@@ -211,7 +208,7 @@ mat3ds FEUncoupledConstrainedMixture::CollagenDevStress(FEMaterialPoint& mp)
 	ar[1] = n[0]*cg - n[1]*sg; a[1] = (F*C_G_rot)*ar[1];
 
 	double I4bC = ar[0]*(C_C*ar[0]);
-	double E0 = (pow(J,-2.0/3.0)*(kappa*(I1bC) + (1-0-3.0*kappa)*(I4bC)))-1.0;
+	double E0 = ((kappa*(I1bC) + (1.0-3.0*kappa)*(I4bC)))-1.0;
 	mat3ds s;
 	s.zero();
 	if (E0 >= 0) {
@@ -219,12 +216,13 @@ mat3ds FEUncoupledConstrainedMixture::CollagenDevStress(FEMaterialPoint& mp)
 			s += h0*(2.*k1*E0*exp(k2*E0*E0));
 	}
 	double I6bC = ar[1]*(C_C*ar[1]);
-	double E1 = (pow(J,-2.0/3.0)*(kappa*(I1bC) + (1-0-3.0*kappa)*(I6bC)))-1.0;
+	double E1 = ((kappa*(I1bC) + (1.0-3.0*kappa)*(I6bC)))-1.0;
 	if (E1 >= 0) {
-			mat3ds h1 = kappa*b_C + (1-3*kappa)*dyad(a[1]);
+			mat3ds h1 = kappa*b_C + (1.0-3.0*kappa)*dyad(a[1]);
 			s += h1*(2.*k1*E1*exp(k2*E1*E1));
 	}
 
+	//change return C_phi*s.dev()/J;
 	return C_phi*s.dev()/J;
 }
 
@@ -251,17 +249,18 @@ tens4ds FEUncoupledConstrainedMixture::CollagenDevTangent(FEMaterialPoint& mp)
  mat3d Q = GetLocalCS(mp); //Get material axes.
  mat3d C_G_rot = (Q*C_G*Q.transpose()); //Rotate the pre-stretch tensor respect to the material axes.
 
- // deformation gradient tensor
- mat3d F = pt.m_F;
-
  // determinant of deformation gradient
  double J = pt.m_J;
 
+ // Evaluate the distortional deformation gradient
+ double Jm13 = pow(J, -1. / 3.);
+ mat3d F = pt.m_F*Jm13;
+
  // Collagen left Cauchy-Green strain tensor
- mat3ds b_C = (F*C_G_rot*C_G_rot.transpose()*F.transpose()).sym();
+ mat3ds b_C = (F*C_G_rot*C_G_rot.transpose()*F.transpose()).sym().dev();
 
  // Collagen right Cauchy-Green strain tensor
- mat3ds C_C = (C_G_rot.transpose()*F.transpose()*F*C_G_rot).sym();
+ mat3ds C_C = (C_G_rot.transpose()*F.transpose()*F*C_G_rot).sym().dev();
 
  // trace of b_C
  double I1bC=b_C.tr();
@@ -279,7 +278,7 @@ tens4ds FEUncoupledConstrainedMixture::CollagenDevTangent(FEMaterialPoint& mp)
  ar[1] = n[0]*cg - n[1]*sg; a[1] = (F*C_G_rot)*ar[1];
 
  double I4bC = ar[0]*(C_C*ar[0]);
- double E0 = (pow(J,-2.0/3.0)*(kappa*(I1bC) + (1-0-3.0*kappa)*(I4bC)))-1.0;
+ double E0 = ((kappa*(I1bC) + (1.0-3.0*kappa)*(I4bC)))-1.0;
  mat3ds s;
  s.zero();
  mat3ds h0;
@@ -288,7 +287,7 @@ tens4ds FEUncoupledConstrainedMixture::CollagenDevTangent(FEMaterialPoint& mp)
 		 s += h0*(2.*k1*E0*exp(k2*E0*E0));
  }
  double I6bC = ar[1]*(C_C*ar[1]);
- double E1 = (pow(J,-2.0/3.0)*(kappa*(I1bC) + (1-0-3.0*kappa)*(I6bC)))-1.0;
+ double E1 = ((kappa*(I1bC) + (1.0-3.0*kappa)*(I6bC)))-1.0;
  mat3ds h1;
  if (E1 >= 0) {
 		 h1 = kappa*b_C + (1-3*kappa)*dyad(a[1]);

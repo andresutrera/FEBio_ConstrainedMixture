@@ -10,19 +10,20 @@
 	<Material>
 		<material id="1" name="Material2" type="UncoupledConstrainedMixture">
 			<density>1</density>
+      <E_phi>0.5</E_phi>
 			<E_c>0.03</E_c>
-			<E_G_z>1.2</E_G_z>
-			<E_G_theta>1.0</E_G_theta>
-			
+			<E_G_z>1.5</E_G_z>
+			<E_G_theta>1.5</E_G_theta>
+			<C_phi>0.5</C_phi>
 			<C_k1>50e-3</C_k1>
 			<C_k2>0.4</C_k2>
 			<C_kappa>0.2</C_kappa>
 			<C_gamma>60</C_gamma>
-			<C_G_z>1.0</C_G_z>
-			<C_G_theta>1.0</C_G_theta>
-			
+			<C_G_z>1.5</C_G_z>
+			<C_G_theta>1.5</C_G_theta>
+
 			<G_Time>1.0</G_Time>
-			<k>30</k>
+			<k>60</k>
 			<mat_axis type="vector">
 				<!--a is the radial vector-->
 				<!--d is the theta vector-->

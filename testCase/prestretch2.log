@@ -32051,7 +32051,7 @@ convergence summary
 	Time in linear solver: 0:00:00
 
 
- Elapsed time : 0:00:01
+ Elapsed time : 0:00:03
 
  T I M I N G   I N F O R M A T I O N
 
@@ -32059,7 +32059,7 @@ convergence summary
 
 	Initialization time ............. : 0:00:00 (0 sec)
 
-	Solve time ...................... : 0:00:01 (1 sec)
+	Solve time ...................... : 0:00:03 (3 sec)
 
 	   IO-time (plot, dmp, data) .... : 0:00:00 (0 sec)
 
@@ -32067,7 +32067,7 @@ convergence summary
 
 	   evaluating stiffness ......... : 0:00:00 (0 sec)
 
-	   evaluating residual .......... : 0:00:00 (0 sec)
+	   evaluating residual .......... : 0:00:03 (3 sec)
 
 	   model update ................. : 0:00:00 (0 sec)
 
@@ -32075,7 +32075,7 @@ convergence summary
 
 	   time in linear solver ........ : 0:00:00 (0 sec)
 
-	Total elapsed time .............. : 0:00:01 (1 sec)
+	Total elapsed time .............. : 0:00:03 (3 sec)
 
 
  N O R M A L   T E R M I N A T I O N
