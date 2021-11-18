@@ -11,21 +11,19 @@
 	<Material>
 		<material id="1" name="Material2" type="UncoupledConstrainedMixture">
 			<density>1</density>
-			<E_phi>1</E_phi>
-			<E_c>30e-3</E_c>
-			<E_G_z>1.3</E_G_z>
-			<E_G_theta>1.0</E_G_theta>
-			
-			<C_phi>1</C_phi>
+			<E_phi>1.0</E_phi>
+			<E_c>0.03</E_c>
+			<E_G_z>1.5</E_G_z>
+			<E_G_theta>1.5</E_G_theta>
+			<C_phi>1.0</C_phi>
 			<C_k1>50e-3</C_k1>
-			<C_k2>0.4</C_k2>
-			<C_kappa>0.1</C_kappa>
+			<C_k2>0.2</C_k2>
+			<C_kappa>0.0</C_kappa>
 			<C_gamma>60</C_gamma>
-			<C_G_z>1.0</C_G_z>
-			<C_G_theta>1.0</C_G_theta>
-			
+			<C_G>1.5</C_G>
+
 			<G_Time>1.0</G_Time>
-			<k>30</k>
+			<k>60</k>
 			<mat_axis type="vector">
 				<!--a is the radial vector-->
 				<!--d is the theta vector-->
@@ -84,11 +82,6 @@
 		</bc>
 	</Boundary>
 	<Constraints>
-		<constraint type="volume" name="Volume1" surface="Volume1">
-			<laugon>0</laugon>
-			<augtol>0.2</augtol>
-			<penalty>1</penalty>
-		</constraint>
 	</Constraints>
 	<Step>
 		<step id="1" name="Step1">

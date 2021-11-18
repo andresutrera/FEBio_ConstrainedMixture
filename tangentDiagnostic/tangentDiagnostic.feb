@@ -5,7 +5,7 @@
             <step_size>0.05</step_size>
         </Control>
         <Scenario type="uni-axial">
-            <strain>1.5</strain>
+            <strain>2.5</strain>
         </Scenario>
 	<Material>
 		<material id="1" name="Material2" type="UncoupledConstrainedMixture">
@@ -19,8 +19,7 @@
 			<C_k2>0.4</C_k2>
 			<C_kappa>0.2</C_kappa>
 			<C_gamma>60</C_gamma>
-			<C_G_z>1.5</C_G_z>
-			<C_G_theta>1.5</C_G_theta>
+			<C_G>1.5</C_G>
 
 			<G_Time>1.0</G_Time>
 			<k>60</k>

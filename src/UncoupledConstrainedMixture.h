@@ -30,7 +30,7 @@ private:
 	// #################### Collagen ####################
 	FEParamDouble  m_C_phi; //Collagen mass fraction
 	FEParamDouble  m_C_k1, m_C_k2, m_C_kappa, m_C_gdeg;	//Fiber constants
-	FEParamDouble  m_C_G[2]; //Pre-stretch tensor
+	FEParamDouble  m_C_G; //Pre-stretch tensor
 	// #################### Collagen ####################
 
 	// #################### Time ####################
