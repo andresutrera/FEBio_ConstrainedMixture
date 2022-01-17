@@ -33,6 +33,12 @@ private:
 	FEParamDouble  m_C_G; //Pre-stretch tensor
 	// #################### Collagen ####################
 
+	// #################### Smooth Muscle ####################
+	FEParamDouble  m_SM_phi; //Collagen mass fraction
+	FEParamDouble  m_SM_k1, m_SM_k2, m_SM_kappa, m_SM_gdeg;	//Fiber constants
+	FEParamDouble  m_SM_G; //Pre-stretch tensor
+	// #################### Smooth Muscle ####################
+
 	// #################### Time ####################
 	double	m_G_Time;	// Elastin desposition time
 	// #################### Collagen ####################
@@ -43,6 +49,7 @@ private:
 	tens4ds NeoHookeDevTangent(FEMaterialPoint& mp);
 	mat3ds CollagenDevStress(FEMaterialPoint& mp);
 	tens4ds CollagenDevTangent(FEMaterialPoint& mp);
-
+	mat3ds SmoothMuscleDevStress(FEMaterialPoint& mp);
+	tens4ds SmoothMuscleDevTangent(FEMaterialPoint& mp);
 
 };

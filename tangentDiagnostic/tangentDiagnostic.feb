@@ -5,22 +5,30 @@
             <step_size>0.05</step_size>
         </Control>
         <Scenario type="uni-axial">
-            <strain>2.5</strain>
+            <strain>2</strain>
         </Scenario>
 	<Material>
 		<material id="1" name="Material2" type="UncoupledConstrainedMixture">
 			<density>1</density>
-      <E_phi>0.5</E_phi>
+      			<E_phi>0.5</E_phi>
 			<E_c>0.03</E_c>
 			<E_G_z>1.5</E_G_z>
 			<E_G_theta>1.5</E_G_theta>
-			<C_phi>0.5</C_phi>
+			
+			<C_phi>0.25</C_phi>
 			<C_k1>50e-3</C_k1>
 			<C_k2>0.4</C_k2>
 			<C_kappa>0.2</C_kappa>
 			<C_gamma>60</C_gamma>
 			<C_G>1.5</C_G>
-
+			
+			<SM_phi>0.25</SM_phi>
+			<SM_k1>50e-3</SM_k1>
+			<SM_k2>0.4</SM_k2>
+			<SM_kappa>0.0</SM_kappa>
+			<SM_gamma>90</SM_gamma>
+			<SM_G>1.2</SM_G>
+			
 			<G_Time>1.0</G_Time>
 			<k>60</k>
 			<mat_axis type="vector">
