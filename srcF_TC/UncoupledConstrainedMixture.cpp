@@ -3,6 +3,12 @@
 #include <FECore/log.h>
 
 BEGIN_FECORE_CLASS(FEUncoupledConstrainedMixture, FEUncoupledMaterial)
+	// #################### F ####################
+	ADD_PARAMETER(m_F_r    , FE_RANGE_GREATER_OR_EQUAL(0.0), "F_r");
+	ADD_PARAMETER(m_F_theta    , FE_RANGE_GREATER_OR_EQUAL(0.0), "F_theta");
+	ADD_PARAMETER(m_F_z    , FE_RANGE_GREATER_OR_EQUAL(0.0), "F_z");
+	// #################### F ####################
+
 	// #################### Elastin ####################
 	ADD_PARAMETER(m_E_phi    , FE_RANGE_CLOSED(0.0, 1.0), "E_phi"); // Elastin mass fraction
 	ADD_PARAMETER(m_E_c    , FE_RANGE_GREATER_OR_EQUAL(0.0), "E_c"); // Elastin shear modulus
@@ -65,6 +71,10 @@ mat3ds FEUncoupledConstrainedMixture::NeoHookeDevStress(FEMaterialPoint& mp)
 	double E_G_r = 1.0/(E_G_z*E_G_t); //Defined by incompressibility condition
 	double G_Time = m_G_Time; //Define the overall time where an "incremental" deposition stretch is applied
 
+	double F_r = m_F_r(mp);
+	double F_theta = m_F_theta(mp);
+	double F_z = m_F_z(mp);
+
 	//Form the stretch deposition tensor E_G with a diagonal matrix.
 	//| E_G_r				0						0 		|
 	//|   0			E_G_theta				0 		|
@@ -73,6 +83,9 @@ mat3ds FEUncoupledConstrainedMixture::NeoHookeDevStress(FEMaterialPoint& mp)
 
 	//Current deposition stretch tensor
 	mat3dd E_G = (time <= G_Time) ? (mat3dd(E_G_r,E_G_t,E_G_z)-I)*time/G_Time+I : mat3dd(E_G_r,E_G_t,E_G_z);
+	mat3dd F_ro = (time <= G_Time) ? (mat3dd(F_r,F_theta,F_z)-I)*time/G_Time+I : mat3dd(F_r,F_theta,F_z);
+
+	E_G = E_G*F_ro;
 
 	mat3d Q = GetLocalCS(mp); //Get material axes.
 	mat3d E_G_rot = (Q*E_G*Q.transpose()); //Rotate the pre-stretch tensor respect to the material axes.
@@ -103,6 +116,10 @@ tens4ds FEUncoupledConstrainedMixture::NeoHookeDevTangent(FEMaterialPoint& mp)
 		double E_G_r = 1.0/(E_G_z*E_G_t); //Defined by incompressibility condition
 		double G_Time = m_G_Time; //Define the overall time where an "incremental" deposition stretch is applied
 
+		double F_r = m_F_r(mp);
+		double F_theta = m_F_theta(mp);
+		double F_z = m_F_z(mp);
+
 		//Form the stretch deposition tensor E_G with a diagonal matrix.
 		//| E_G_r				0						0 		|
 		//|   0			E_G_theta				0 		|
@@ -111,7 +128,9 @@ tens4ds FEUncoupledConstrainedMixture::NeoHookeDevTangent(FEMaterialPoint& mp)
 
 		//Current deposition stretch tensor
 		mat3dd E_G = (time <= G_Time) ? (mat3dd(E_G_r,E_G_t,E_G_z)-I)*time/G_Time+I : mat3dd(E_G_r,E_G_t,E_G_z);
+		mat3dd F_ro = (time <= G_Time) ? (mat3dd(F_r,F_theta,F_z)-I)*time/G_Time+I : mat3dd(F_r,F_theta,F_z);
 
+		E_G = E_G*F_ro;
 		mat3d Q = GetLocalCS(mp); //Get material axes
 		mat3d E_G_rot = (Q*E_G*Q.transpose()); //Rotate the pre-stretch tensor respect to the material axes.
 
@@ -147,6 +166,10 @@ mat3ds FEUncoupledConstrainedMixture::CollagenDevStress(FEMaterialPoint& mp)
 	double kappa = m_C_kappa(mp);
 	double g = m_C_gdeg(mp)*PI/180;
 
+	double F_r = m_F_r(mp);
+	double F_theta = m_F_theta(mp);
+	double F_z = m_F_z(mp);
+
 	double C_G = m_C_G(mp); //Copy the deposition stretch value.
 	double G_Time = m_G_Time; //Define the overall time where an "incremental" deposition stretch is applied
 
@@ -175,6 +198,10 @@ mat3ds FEUncoupledConstrainedMixture::CollagenDevStress(FEMaterialPoint& mp)
 	//Current deposition stretch tensor oriented respect to cylindrical coordinates (r,theta,zeta).
 	mat3d C_G_fib0 = (T0*C_G_fib*T0.transpose());
 	mat3d C_G_fib1 = (T1*C_G_fib*T1.transpose());
+
+	mat3dd F_ro = (time <= G_Time) ? (mat3dd(F_r,F_theta,F_z)-I)*time/G_Time+I : mat3dd(F_r,F_theta,F_z);
+	C_G_fib0 = C_G_fib0*F_ro;
+	C_G_fib1 = C_G_fib1*F_ro;
 
 	mat3d Q = GetLocalCS(mp); //Get material axes.
 
@@ -224,20 +251,18 @@ mat3ds FEUncoupledConstrainedMixture::CollagenDevStress(FEMaterialPoint& mp)
 	mat3ds s;
 	s.zero();
 	mat3ds h0;
-	if (E0 >= 0) {
-			h0 = kappa*b_C0 + (1-3*kappa)*dyad(a[0]);
-			s += h0*(2.*k1*E0*exp(k2*E0*E0));
-	}
+	h0 = kappa*b_C0 + (1-3*kappa)*dyad(a[0]);
+	s += h0*(2.*k1*E0*exp(k2*E0*E0));
+
 	double I6bC = ar[1]*(C_C1*ar[1]);
 	if(I6bC < 1.0) {
 		I6bC = 1.0;
 	}
 	double E1 = ((kappa*(I1bC1) + (1-3*kappa)*(I6bC)))-1.0;
 	mat3ds h1;
-	if (E1 >= 0) {
-			h1 = kappa*b_C1 + (1-3*kappa)*dyad(a[1]);
-			s += h1*(2.*k1*E1*exp(k2*E1*E1));
-	}
+	h1 = kappa*b_C1 + (1-3*kappa)*dyad(a[1]);
+	s += h1*(2.*k1*E1*exp(k2*E1*E1));
+
 	return C_phi*s.dev()/J;
 }
 
@@ -252,6 +277,10 @@ tens4ds FEUncoupledConstrainedMixture::CollagenDevTangent(FEMaterialPoint& mp)
  double k2 = m_C_k2(mp);
  double kappa = m_C_kappa(mp);
  double g = m_C_gdeg(mp)*PI/180;
+
+ double F_r = m_F_r(mp);
+ double F_theta = m_F_theta(mp);
+ double F_z = m_F_z(mp);
 
  double C_G = m_C_G(mp); //Copy the deposition stretch value.
  double G_Time = m_G_Time; //Define the overall time where an "incremental" deposition stretch is applied
@@ -281,6 +310,10 @@ tens4ds FEUncoupledConstrainedMixture::CollagenDevTangent(FEMaterialPoint& mp)
  //Current deposition stretch tensor oriented respect to cylindrical coordinates (r,theta,zeta).
  mat3ds C_G_fib0 = (T0*C_G_fib*T0.transpose()).sym();
  mat3ds C_G_fib1 = (T1*C_G_fib*T1.transpose()).sym();
+
+ mat3dd F_ro = (time <= G_Time) ? (mat3dd(F_r,F_theta,F_z)-I)*time/G_Time+I : mat3dd(F_r,F_theta,F_z);
+ C_G_fib0 = C_G_fib0*F_ro;
+ C_G_fib1 = C_G_fib1*F_ro;
 
  mat3d Q = GetLocalCS(mp); //Get material axes.
 
@@ -331,20 +364,18 @@ tens4ds FEUncoupledConstrainedMixture::CollagenDevTangent(FEMaterialPoint& mp)
  mat3ds s;
  s.zero();
  mat3ds h0;
- if (E0 >= 0) {
- 		h0 = kappa*b_C0 + (1-3*kappa)*dyad(a[0]);
- 		s += h0*(2.*k1*E0*exp(k2*E0*E0));
- }
+ h0 = kappa*b_C0 + (1-3*kappa)*dyad(a[0]);
+ s += h0*(2.*k1*E0*exp(k2*E0*E0));
+
  double I6bC = ar[1]*(C_C1*ar[1]);
  if(I6bC < 1.0) {
 	 I6bC = 1.0;
  }
  double E1 = ((kappa*(I1bC1) + (1-3*kappa)*(I6bC)))-1.0;
  mat3ds h1;
- if (E1 >= 0) {
- 		h1 = kappa*b_C1 + (1-3*kappa)*dyad(a[1]);
- 		s += h1*(2.*k1*E1*exp(k2*E1*E1));
- }
+ h1 = kappa*b_C1 + (1-3*kappa)*dyad(a[1]);
+ s += h1*(2.*k1*E1*exp(k2*E1*E1));
+
 
  mat3ds sbar = s.dev();
 
@@ -369,6 +400,10 @@ mat3ds FEUncoupledConstrainedMixture::SmoothMuscleDevStress(FEMaterialPoint& mp)
 	double k2 = m_SM_k2(mp);
 	double kappa = m_SM_kappa(mp);
 	double g = m_SM_gdeg(mp)*PI/180;
+
+	double F_r = m_F_r(mp);
+  double F_theta = m_F_theta(mp);
+  double F_z = m_F_z(mp);
 
 	double SM_G = m_SM_G(mp); //Copy the deposition stretch value.
 	double G_Time = m_G_Time; //Define the overall time where an "incremental" deposition stretch is applied
@@ -398,6 +433,10 @@ mat3ds FEUncoupledConstrainedMixture::SmoothMuscleDevStress(FEMaterialPoint& mp)
 	//Current deposition stretch tensor oriented respect to cylindrical coordinates (r,theta,zeta).
 	mat3d SM_G_fib0 = (T0*SM_G_fib*T0.transpose());
 	mat3d SM_G_fib1 = (T1*SM_G_fib*T1.transpose());
+
+	mat3dd F_ro = (time <= G_Time) ? (mat3dd(F_r,F_theta,F_z)-I)*time/G_Time+I : mat3dd(F_r,F_theta,F_z);
+  SM_G_fib0 = SM_G_fib0*F_ro;
+  SM_G_fib1 = SM_G_fib1*F_ro;
 
 	mat3d Q = GetLocalCS(mp); //Get material axes.
 
@@ -440,21 +479,25 @@ mat3ds FEUncoupledConstrainedMixture::SmoothMuscleDevStress(FEMaterialPoint& mp)
 	ar[1] = n[0]*cg - n[1]*sg; a[1] = F_C1*ar[1];
 
 	double I4bC = ar[0]*(C_C0*ar[0]);
+	if(I4bC < 1.0) {
+		I4bC = 1.0;
+	}
 	double E0 = ((kappa*(I1bC0) + (1-3*kappa)*(I4bC)))-1.0;
 	mat3ds s;
 	s.zero();
 	mat3ds h0;
-	if (E0 >= 0) {
-			h0 = kappa*b_C0 + (1-3*kappa)*dyad(a[0]);
-			s += h0*(2.*k1*E0*exp(k2*E0*E0));
-	}
+	h0 = kappa*b_C0 + (1-3*kappa)*dyad(a[0]);
+	s += h0*(2.*k1*E0*exp(k2*E0*E0));
+
 	double I6bC = ar[1]*(C_C1*ar[1]);
+	if(I6bC < 1.0) {
+		I6bC = 1.0;
+	}
 	double E1 = ((kappa*(I1bC1) + (1-3*kappa)*(I6bC)))-1.0;
 	mat3ds h1;
-	if (E1 >= 0) {
-			h1 = kappa*b_C1 + (1-3*kappa)*dyad(a[1]);
-			s += h1*(2.*k1*E1*exp(k2*E1*E1));
-	}
+	h1 = kappa*b_C1 + (1-3*kappa)*dyad(a[1]);
+	s += h1*(2.*k1*E1*exp(k2*E1*E1));
+
 	return SM_phi*s.dev()/J;
 }
 
@@ -469,6 +512,10 @@ tens4ds FEUncoupledConstrainedMixture::SmoothMuscleDevTangent(FEMaterialPoint& m
  double k2 = m_SM_k2(mp);
  double kappa = m_SM_kappa(mp);
  double g = m_SM_gdeg(mp)*PI/180;
+
+ double F_r = m_F_r(mp);
+ double F_theta = m_F_theta(mp);
+ double F_z = m_F_z(mp);
 
  double SM_G = m_SM_G(mp); //Copy the deposition stretch value.
  double G_Time = m_G_Time; //Define the overall time where an "incremental" deposition stretch is applied
@@ -498,6 +545,10 @@ tens4ds FEUncoupledConstrainedMixture::SmoothMuscleDevTangent(FEMaterialPoint& m
  //Current deposition stretch tensor oriented respect to cylindrical coordinates (r,theta,zeta).
  mat3ds SM_G_fib0 = (T0*SM_G_fib*T0.transpose()).sym();
  mat3ds SM_G_fib1 = (T1*SM_G_fib*T1.transpose()).sym();
+
+ mat3dd F_ro = (time <= G_Time) ? (mat3dd(F_r,F_theta,F_z)-I)*time/G_Time+I : mat3dd(F_r,F_theta,F_z);
+ SM_G_fib0 = SM_G_fib0*F_ro;
+ SM_G_fib1 = SM_G_fib1*F_ro;
 
  mat3d Q = GetLocalCS(mp); //Get material axes.
 
@@ -541,21 +592,25 @@ tens4ds FEUncoupledConstrainedMixture::SmoothMuscleDevTangent(FEMaterialPoint& m
  ar[1] = n[0]*cg - n[1]*sg; a[1] = F_C1*ar[1];
 
  double I4bC = ar[0]*(C_C0*ar[0]);
+ if(I4bC < 1.0) {
+	 I4bC = 1.0;
+ }
  double E0 = ((kappa*(I1bC0) + (1-3*kappa)*(I4bC)))-1.0;
  mat3ds s;
  s.zero();
  mat3ds h0;
- if (E0 >= 0) {
- 		h0 = kappa*b_C0 + (1-3*kappa)*dyad(a[0]);
- 		s += h0*(2.*k1*E0*exp(k2*E0*E0));
- }
+ h0 = kappa*b_C0 + (1-3*kappa)*dyad(a[0]);
+ s += h0*(2.*k1*E0*exp(k2*E0*E0));
+
  double I6bC = ar[1]*(C_C1*ar[1]);
+ if(I6bC < 1.0) {
+	 I6bC = 1.0;
+ }
  double E1 = ((kappa*(I1bC1) + (1-3*kappa)*(I6bC)))-1.0;
  mat3ds h1;
- if (E1 >= 0) {
- 		h1 = kappa*b_C1 + (1-3*kappa)*dyad(a[1]);
- 		s += h1*(2.*k1*E1*exp(k2*E1*E1));
- }
+ h1 = kappa*b_C1 + (1-3*kappa)*dyad(a[1]);
+ s += h1*(2.*k1*E1*exp(k2*E1*E1));
+ 
 
  mat3ds sbar = s.dev();
 
